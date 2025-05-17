@@ -6,9 +6,10 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Building, Home, User, CreditCard, LogOut, Menu, X, Bell, ChevronDown } from "lucide-react"
+import { Building, Home, User, CreditCard, LogOut, Menu, X, Bell, ChevronDown, Calendar } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Logo } from "@/components/logo"
+import { Separator } from "@/components/ui/separator"
 
 export default function DashboardLayout({
   children,
@@ -33,7 +34,7 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-30">
+      <header className="bg-white border-b sticky top-0 z-30 shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" className="md:hidden" onClick={toggleSidebar}>
@@ -81,7 +82,7 @@ export default function DashboardLayout({
         ></div>
 
         <aside
-          className={`fixed top-0 left-0 z-50 h-full w-64 bg-white border-r transform transition-transform duration-200 md:relative md:translate-x-0 ${
+          className={`fixed top-0 left-0 z-50 h-full w-64 bg-white border-r transform transition-transform duration-200 md:relative md:translate-x-0 shadow-md ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -92,7 +93,19 @@ export default function DashboardLayout({
               <span className="sr-only">Close menu</span>
             </Button>
           </div>
-          <nav className="p-4 space-y-2">
+          <div className="p-4">
+            <div className="flex items-center gap-3 mb-6 mt-2">
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                <User className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <div className="font-medium">John Doe</div>
+                <div className="text-xs text-gray-500">STU/2023/001234</div>
+              </div>
+            </div>
+            <Separator className="my-4" />
+          </div>
+          <nav className="p-4 space-y-1">
             <Link
               href="/dashboard"
               className={`flex items-center gap-3 px-3 py-2 rounded-md ${
@@ -132,6 +145,16 @@ export default function DashboardLayout({
             >
               <CreditCard className="h-5 w-5" />
               <span>Payments</span>
+            </Link>
+            <Link
+              href="/dashboard/calendar"
+              className={`flex items-center gap-3 px-3 py-2 rounded-md ${
+                isActive("/dashboard/calendar") ? "bg-blue-50 text-blue-600" : "text-gray-700 hover:bg-gray-100"
+              }`}
+              onClick={closeSidebar}
+            >
+              <Calendar className="h-5 w-5" />
+              <span>Academic Calendar</span>
             </Link>
             <div className="pt-4 mt-4 border-t">
               <Link

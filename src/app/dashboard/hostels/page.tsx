@@ -15,7 +15,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
@@ -105,10 +104,18 @@ const hostels = [
 ]
 
 export default function HostelsPage() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedHostel, setSelectedHostel] = useState<any>(null)
   const [isBooking, setIsBooking] = useState(false)
   const [bookingSuccess, setBookingSuccess] = useState(false)
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null)
+
+  const handleOpenDialog = (hostel: any) => {
+    setSelectedHostel(hostel)
+    setIsDialogOpen(true)
+    setBookingSuccess(false)
+    setSelectedRoom(null)
+  }
 
   const handleBookHostel = async () => {
     if (!selectedRoom) return
@@ -141,7 +148,7 @@ export default function HostelsPage() {
   }
 
   const renderHostelCard = (hostel: any) => (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
       <div className="relative h-48">
         <Image
           src={
@@ -161,7 +168,7 @@ export default function HostelsPage() {
         <CardTitle>{hostel.name}</CardTitle>
         <CardDescription>₦{hostel.price.toLocaleString()} per academic year</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent className="space-y-2 flex-grow">
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-500">Capacity:</span>
           <span>{hostel.capacity}</span>
@@ -186,119 +193,11 @@ export default function HostelsPage() {
         </div>
       </CardContent>
       <CardFooter>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Pulse>
-              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={() => setSelectedHostel(hostel)}>
-                View Details
-              </Button>
-            </Pulse>
-          </DialogTrigger>
-          <DialogContent className="max-w-3xl">
-            <DialogHeader>
-              <DialogTitle>
-                {selectedHostel?.name} - {selectedHostel?.type}
-              </DialogTitle>
-              <DialogDescription>₦{selectedHostel?.price.toLocaleString()} per academic year</DialogDescription>
-            </DialogHeader>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="relative h-64 rounded-md overflow-hidden">
-                <Image
-                  src={selectedHostel?.image || ""}
-                  alt={selectedHostel?.name || ""}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Description</h3>
-                  <p className="mt-1">{selectedHostel?.description}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Capacity</h3>
-                  <p className="mt-1">{selectedHostel?.capacity}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Availability</h3>
-                  <p className="mt-1">
-                    {selectedHostel?.available} of {selectedHostel?.total} rooms available
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Features</h3>
-                  <div className="mt-1 flex flex-wrap gap-2">
-                    {selectedHostel?.features.map((feature: string) => (
-                      <Badge key={feature} variant="outline" className="flex items-center gap-1">
-                        {getFeatureIcon(feature)}
-                        {feature}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {!bookingSuccess ? (
-              <>
-                <div className="border-t pt-4 mt-4">
-                  <h3 className="font-medium mb-3">Select Room Type</h3>
-                  <RadioGroup value={selectedRoom || ""} onValueChange={setSelectedRoom}>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="ground" id="ground" />
-                      <Label htmlFor="ground">Ground Floor</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="first" id="first" />
-                      <Label htmlFor="first">First Floor</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="second" id="second" />
-                      <Label htmlFor="second">Second Floor</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-                <DialogFooter>
-                  <Pulse>
-                    <Button
-                      className="bg-blue-600 hover:bg-blue-700"
-                      onClick={handleBookHostel}
-                      disabled={isBooking || !selectedRoom}
-                    >
-                      {isBooking ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Processing...
-                        </>
-                      ) : (
-                        "Book and Proceed to Payment"
-                      )}
-                    </Button>
-                  </Pulse>
-                </DialogFooter>
-              </>
-            ) : (
-              <div className="border-t pt-4 mt-4">
-                <FadeIn>
-                  <div className="bg-green-50 text-green-700 p-4 rounded-md flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 mt-0.5" />
-                    <div>
-                      <h3 className="font-medium">Booking Successful!</h3>
-                      <p className="mt-1">Your hostel booking has been confirmed. Please proceed to make payment.</p>
-                      <div className="mt-4">
-                        <Link href="/dashboard/payments">
-                          <Pulse>
-                            <Button className="bg-blue-600 hover:bg-blue-700">Proceed to Payment</Button>
-                          </Pulse>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </FadeIn>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
+        <Pulse>
+          <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={() => handleOpenDialog(hostel)}>
+            View Details
+          </Button>
+        </Pulse>
       </CardFooter>
     </Card>
   )
@@ -366,6 +265,118 @@ export default function HostelsPage() {
           </StaggerContainer>
         </TabsContent>
       </Tabs>
+
+      {/* Separate Dialog component outside of the card rendering */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-3xl">
+          {selectedHostel && (
+            <>
+              <DialogHeader>
+                <DialogTitle>
+                  {selectedHostel.name} - {selectedHostel.type}
+                </DialogTitle>
+                <DialogDescription>₦{selectedHostel.price.toLocaleString()} per academic year</DialogDescription>
+              </DialogHeader>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="relative h-64 rounded-md overflow-hidden">
+                  <Image
+                    src={selectedHostel.image || "/placeholder.svg"}
+                    alt={selectedHostel.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Description</h3>
+                    <p className="mt-1">{selectedHostel.description}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Capacity</h3>
+                    <p className="mt-1">{selectedHostel.capacity}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Availability</h3>
+                    <p className="mt-1">
+                      {selectedHostel.available} of {selectedHostel.total} rooms available
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Features</h3>
+                    <div className="mt-1 flex flex-wrap gap-2">
+                      {selectedHostel.features.map((feature: string) => (
+                        <Badge key={feature} variant="outline" className="flex items-center gap-1">
+                          {getFeatureIcon(feature)}
+                          {feature}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {!bookingSuccess ? (
+                <>
+                  <div className="border-t pt-4 mt-4">
+                    <h3 className="font-medium mb-3">Select Room Type</h3>
+                    <RadioGroup value={selectedRoom || ""} onValueChange={setSelectedRoom}>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="ground" id="ground" />
+                        <Label htmlFor="ground">Ground Floor</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="first" id="first" />
+                        <Label htmlFor="first">First Floor</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="second" id="second" />
+                        <Label htmlFor="second">Second Floor</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                  <DialogFooter>
+                    <Pulse>
+                      <Button
+                        className="bg-blue-600 hover:bg-blue-700"
+                        onClick={handleBookHostel}
+                        disabled={isBooking || !selectedRoom}
+                      >
+                        {isBooking ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          "Book and Proceed to Payment"
+                        )}
+                      </Button>
+                    </Pulse>
+                  </DialogFooter>
+                </>
+              ) : (
+                <div className="border-t pt-4 mt-4">
+                  <FadeIn>
+                    <div className="bg-green-50 text-green-700 p-4 rounded-md flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 mt-0.5" />
+                      <div>
+                        <h3 className="font-medium">Booking Successful!</h3>
+                        <p className="mt-1">Your hostel booking has been confirmed. Please proceed to make payment.</p>
+                        <div className="mt-4">
+                          <Link href="/dashboard/payments">
+                            <Pulse>
+                              <Button className="bg-blue-600 hover:bg-blue-700">Proceed to Payment</Button>
+                            </Pulse>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </FadeIn>
+                </div>
+              )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -9,7 +9,7 @@ const HeroSection = () => {
   return (
     <section className="py-20 bg-gradient-to-b from-white to-blue-50">
     <div className="container mx-auto px-4 grid md:grid-cols-2 gap-8 items-center w-full">
-      <FadeIn direction="right">
+      <FadeIn fullWidth direction="right">
         <div className="space-y-6">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
           Simplify Your{" "}
@@ -39,7 +39,7 @@ const HeroSection = () => {
         </div>
         </div>
       </FadeIn>
-      <FadeIn direction="left">
+      <FadeIn fullWidth direction="left">
         <Float yOffset={8} duration={3}>
         <div className=" h-[400px] w-full">
           <Image

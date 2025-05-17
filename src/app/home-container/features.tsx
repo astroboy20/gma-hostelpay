@@ -6,7 +6,7 @@ const Features = () => {
   return (
     <section id="features" className="py-20 bg-white">
       <div className="container mx-auto px-4 ">
-        <FadeIn>
+        <FadeIn fullWidth>
           <div className="mx-auto text-center flex flex-col mb-16 w-full ">
             <h2 className="text-3xl font-bold text-gray-900 mb-4 ">Features</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">

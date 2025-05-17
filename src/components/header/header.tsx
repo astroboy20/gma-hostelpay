@@ -1,8 +1,8 @@
 import React from "react";
-import { Logo } from "./logo";
+import { Logo } from "../logo";
 import Link from "next/link";
-import { Pulse } from "./animation";
-import { Button } from "./ui/button";
+import { Pulse } from "../animation";
+import { Button } from "../ui/button";
 
 const Header = () => {
   return (

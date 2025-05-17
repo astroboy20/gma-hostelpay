@@ -19,7 +19,7 @@ export function FadeIn({
   width = "fit-content",
   delay = 0,
   direction = "up",
-  fullWidth = true,
+  fullWidth = false,
   className = "",
 }: FadeInProps) {
   const controls = useAnimation()

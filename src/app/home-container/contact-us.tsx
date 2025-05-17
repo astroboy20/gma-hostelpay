@@ -6,7 +6,7 @@ const ContactUs = () => {
   return (
     <section id="contact" className="py-20 bg-blue-50">
           <div className="container mx-auto px-4">
-            <FadeIn>
+            <FadeIn fullWidth>
               <div className="text-center mb-16">
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">Contact Us</h2>
                 <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -15,7 +15,7 @@ const ContactUs = () => {
               </div>
             </FadeIn>
 
-            <FadeIn direction="up">
+            <FadeIn fullWidth direction="up">
               <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
                 <form className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">

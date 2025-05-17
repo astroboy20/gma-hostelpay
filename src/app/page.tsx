@@ -1,4 +1,4 @@
-import { Header } from "@/components/header";
+import { Header } from "@/components/header/header";
 import { HeroSection } from "./home-container/hero-section";
 import { Features } from "./home-container/features";
 import { HowItWorks } from "./home-container/how-it-works";

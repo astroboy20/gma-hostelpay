@@ -1,5 +1,7 @@
 "use client"
 
+import { useState } from "react"
+
 import { useEffect, useRef, type ReactNode } from "react"
 import { motion, useAnimation, useInView } from "framer-motion"
 
@@ -172,4 +174,42 @@ export function Float({ children, className = "", yOffset = 10, duration = 2 }: 
       {children}
     </motion.div>
   )
+}
+
+interface CounterProps {
+  from: number
+  to: number
+  duration?: number
+  formatter?: (value: number) => string
+}
+
+export function Counter({ from, to, duration = 2, formatter }: CounterProps) {
+  const [count, setCount] = useEffectState(from)
+
+  useEffect(() => {
+    let start: number | null = null
+    const frame = (timestamp: number) => {
+      if (!start) start = timestamp
+      const progress = Math.min((timestamp - start) / (duration * 1000), 1)
+      setCount(Math.floor(progress * (to - from) + from))
+      if (progress < 1) {
+        requestAnimationFrame(frame)
+      }
+    }
+    requestAnimationFrame(frame)
+  }, [from, to, duration, setCount])
+
+  return <>{formatter ? formatter(count) : count}</>
+}
+
+// Hook to avoid depending on use-state-with-callback
+function useEffectState(initialState: any) {
+  const [state, setState] = useState(initialState)
+  const stateRef = useRef(state)
+
+  useEffect(() => {
+    stateRef.current = state
+  }, [state])
+
+  return [state, setState]
 }

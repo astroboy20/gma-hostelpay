@@ -12,39 +12,84 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLoginMutation } from "@/providers/apis/auth-api";
+import { log } from "console";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 const Login = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [loginData, setLoginData] = useState({
+    matricNumber: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState({
+    matricNumber: "",
+    password: "",
+    form: "",
+  });
   const router = useRouter();
+  const [login, { isLoading }] = useLoginMutation();
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setLoginData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    // Clear field-specific error when user types
+    if (errors[name as keyof typeof errors]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      matricNumber: "",
+      password: "",
+      form: "",
+    };
+
+    if (!loginData.matricNumber.trim()) {
+      newErrors.matricNumber = "Matriculation number is required";
+    }
+    if (!loginData.password) {
+      newErrors.password = "Password is required";
+    }
+
+    setErrors(newErrors);
+    return !newErrors.matricNumber && !newErrors.password;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError("");
-
-    const formData = new FormData(e.currentTarget);
-    const matricNumber = formData.get("matricNumber") as string;
-    const password = formData.get("password") as string;
-
-    // Simulate login - in a real app, you would call your authentication API
+    if (!validateForm()) return;
+  
+    setErrors((prev) => ({ ...prev, form: "" })); 
+  
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // For demo purposes, we'll just redirect to the dashboard
-      // In a real app, you would validate credentials and set authentication state
+      const request = await login(loginData).unwrap();
+      toast.success(request?.message); 
       router.push("/dashboard");
-    } catch (err) {
-      setError("Invalid credentials. Please try again.");
-    } finally {
-      setIsLoading(false);
+    } catch (err: any) {
+      const errorMessage = err?.data?.error || "Login failed. Please try again.";
+      toast.error(errorMessage); 
+      setErrors((prev) => ({
+        ...prev,
+        form: errorMessage,
+      }));
     }
   };
+
+  // Clear form error when user starts typing
+  useEffect(() => {
+    if (errors.form && (loginData.matricNumber || loginData.password)) {
+      setErrors((prev) => ({ ...prev, form: "" }));
+    }
+  }, [loginData.matricNumber, loginData.password, errors.form]);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-blue-50 px-4">
       <FadeIn fullWidth className="flex justify-center items-center">
@@ -63,9 +108,9 @@ const Login = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
+              {errors.form && (
                 <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
-                  {error}
+                  {errors.form}jfjfj
                 </div>
               )}
               <div className="space-y-2">
@@ -74,8 +119,15 @@ const Login = () => {
                   id="matricNumber"
                   name="matricNumber"
                   placeholder="Enter your matriculation number"
-                  required
+                  value={loginData.matricNumber}
+                  onChange={handleChange}
+                  className={errors.matricNumber ? "border-red-500" : ""}
                 />
+                {errors.matricNumber && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.matricNumber}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -92,8 +144,13 @@ const Login = () => {
                   name="password"
                   type="password"
                   placeholder="Enter your password"
-                  required
+                  value={loginData.password}
+                  onChange={handleChange}
+                  className={errors.password ? "border-red-500" : ""}
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                )}
               </div>
               <Pulse>
                 <Button

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function Post(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
     try {
         const { refreshToken } = await req.json()
         const response = NextResponse.json({ message: "Referesh Token saved!" })

@@ -12,15 +12,18 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { saveRefreshToken } from "@/lib/token";
 import { useLoginMutation } from "@/providers/apis/auth-api";
-import { log } from "console";
+import { setAccessToken } from "@/providers/store/auth-slice";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const [loginData, setLoginData] = useState({
     matricNumber: "",
     password: "",
@@ -65,17 +68,23 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setAccessToken(null);
     if (!validateForm()) return;
-  
-    setErrors((prev) => ({ ...prev, form: "" })); 
-  
+
+    setErrors((prev) => ({ ...prev, form: "" }));
+
     try {
       const request = await login(loginData).unwrap();
-      toast.success(request?.message); 
-      router.push("/dashboard");
+      toast.success(request?.message);
+      if (request?.accessToken) {
+        dispatch(setAccessToken(request?.accessToken));
+        await saveRefreshToken(request?.refreshToken);
+      }
+      // router.push("/dashboard");
     } catch (err: any) {
-      const errorMessage = err?.data?.error || "Login failed. Please try again.";
-      toast.error(errorMessage); 
+      const errorMessage =
+        err?.data?.error || "Login failed. Please try again.";
+      toast.error(errorMessage);
       setErrors((prev) => ({
         ...prev,
         form: errorMessage,

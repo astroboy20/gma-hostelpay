@@ -80,7 +80,7 @@ const Login = () => {
         dispatch(setAccessToken(request?.accessToken));
         await saveRefreshToken(request?.refreshToken);
       }
-      // router.push("/dashboard");
+      router.replace("/dashboard");
     } catch (err: any) {
       const errorMessage =
         err?.data?.error || "Login failed. Please try again.";

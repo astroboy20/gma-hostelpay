@@ -4,6 +4,7 @@ import { createContext, ReactNode, useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { setAccessToken, setIsRestoring } from "../store/auth-slice";
+import { usePathname } from "next/navigation";
 
 type AuthContextType = {
   accessToken: string | null;
@@ -20,7 +21,9 @@ export const AuthProvider = ({
   children: ReactNode;
   refreshToken: string | null;
 }) => {
-  const dispatch = useDispatch();
+const dispatch = useDispatch();
+const pathname = usePathname();
+const redirectUrl = encodeURIComponent(pathname || "/");
   const accessToken = useSelector((state: RootState) => state.auth.accessToken);
   const isRestoring = useSelector((state: RootState) => state.auth.isRestoring);
 
@@ -48,7 +51,7 @@ export const AuthProvider = ({
         const data = await request.json();
         dispatch(setAccessToken(data?.accessToken));
       } else if (request.status === 401) {
-        // window.location.href = "/login";
+        window.location.href = `/auth/login?returnURL=${redirectUrl}`;
       }
     } catch (error) {
       console.error("Error restoring access token:", error);

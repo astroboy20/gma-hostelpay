@@ -17,12 +17,14 @@ import { useLoginMutation } from "@/providers/apis/auth-api";
 import { setAccessToken } from "@/providers/store/auth-slice";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 
 const Login = () => {
+  const searchParams = useSearchParams();
+  const redirectURL = searchParams?.get("returnURL");
   const dispatch = useDispatch();
   const [loginData, setLoginData] = useState({
     matricNumber: "",
@@ -80,7 +82,8 @@ const Login = () => {
         dispatch(setAccessToken(request?.accessToken));
         await saveRefreshToken(request?.refreshToken);
       }
-      router.replace("/dashboard");
+
+      router.replace(redirectURL ? redirectURL : "/dashboard");
     } catch (err: any) {
       const errorMessage =
         err?.data?.error || "Login failed. Please try again.";

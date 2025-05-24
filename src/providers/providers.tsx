@@ -2,7 +2,6 @@
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import { ReactNode, useEffect, useState } from "react";
-import { AuthProvider } from "./states/auth-context";
 
 export function Providers({
   children,
@@ -18,9 +17,5 @@ export function Providers({
       setCookies(refreshToken);
     }
   }, [refreshToken]);
-  return (
-    <Provider store={store}>
-      <AuthProvider refreshToken={cookies}>{children}</AuthProvider>
-    </Provider>
-  );
+  return <Provider store={store}>{children}</Provider>;
 }

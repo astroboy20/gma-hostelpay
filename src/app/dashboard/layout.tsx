@@ -6,17 +6,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  Building,
-  Home,
-  User,
-  CreditCard,
-  LogOut,
-  X,
-} from "lucide-react";
+import { Building, Home, User, CreditCard, LogOut, X } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { Separator } from "@/components/ui/separator";
 import { DashboardHeader } from "@/components/header/dashboard-header";
+import { useUserDetailsQuery } from "@/providers/apis/auth-api";
+import { useSelector } from "react-redux";
+import { RootState } from "@/providers/store/store";
 
 export default function DashboardLayout({
   children,
@@ -38,6 +34,12 @@ export default function DashboardLayout({
     return pathname === path;
   };
 
+  const { accessToken } = useSelector((state: RootState) => state.auth);
+  const { data, isLoading } = useUserDetailsQuery({
+    token: accessToken || "",
+  });
+
+  console.log("data", data,accessToken);
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}

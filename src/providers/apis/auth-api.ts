@@ -25,8 +25,20 @@ export const authApi = createApi({
                     extraOptions: { maxRetries: 0 }
                 }
             }
+        }),
+        userDetails: build.query<any, { token: string | null }>({
+            query({ token }) {
+                return {
+                    url: "user-details",
+                    method: "GET",
+                    extraOptions: { maxRetries: 0 },
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            }
         })
     }),
 })
 
-export const {useRegisterMutation, useLoginMutation} = authApi
+export const { useRegisterMutation, useLoginMutation, useUserDetailsQuery } = authApi

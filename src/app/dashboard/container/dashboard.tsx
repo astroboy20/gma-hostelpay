@@ -20,28 +20,40 @@ import Link from "next/link";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/animation";
+import { RootState } from "@/providers/store/store";
+import { useSelector } from "react-redux";
+import { useUserDetailsQuery } from "@/providers/apis/auth-api";
 
 // Mock student data
-const studentData = {
-  name: "John Doe",
-  matricNumber: "STU/2023/001234",
-  faculty: "Engineering",
-  department: "Computer Engineering",
-  level: "300 Level",
-  currentHostel: "Block A - Room 123",
-  paymentStatus: "Paid",
-  paymentDate: "15 Jan 2023",
-  academicYear: "2023/2024",
-};
+// const studentData = {
+//   name: "John Doe",
+//   matricNumber: "STU/2023/001234",
+//   faculty: "Engineering",
+//   department: "Computer Engineering",
+//   level: "300 Level",
+//   currentHostel: "Block A - Room 123",
+//   paymentStatus: "Paid",
+//   paymentDate: "15 Jan 2023",
+//   academicYear: "2023/2024",
+// };
 
 const Dashboard = () => {
+  const { accessToken } = useSelector((state: RootState) => state.auth);
+  const { data: studentData, isLoading } = useUserDetailsQuery(
+    {
+      token: accessToken,
+    },
+    { skip: !accessToken }
+  );
+
+  console.log("data", studentData, accessToken);
   return (
     <div className="space-y-8  mx-auto">
       <FadeIn fullWidth>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-              Welcome, {studentData.name}
+              Welcome, {studentData?.firstName}
             </h1>
             <p className="text-gray-500 mt-1">
               Here's an overview of your student information and accommodation
@@ -82,48 +94,43 @@ const Dashboard = () => {
                     <h3 className="text-sm font-medium text-gray-500">
                       Full Name
                     </h3>
-                    <p className="text-base font-medium">{studentData.name}</p>
+                    <p className="text-base font-medium">
+                      {studentData?.firstName} {studentData?.lastName}
+                    </p>
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">
                       Matriculation Number
                     </h3>
                     <p className="text-base font-medium">
-                      {studentData.matricNumber}
+                      {studentData?.matricNumber}
                     </p>
                   </div>
                 </div>
+
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">
-                      Faculty
-                    </h3>
+                    <h3 className="text-sm font-medium text-gray-500">Level</h3>
                     <p className="text-base font-medium">
-                      {studentData.faculty}
+                      {studentData?.level}
                     </p>
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">
                       Department
                     </h3>
-                    <p className="text-base font-medium">
-                      {studentData.department}
+                    <p className="text-base font-medium uppercase">
+                      {studentData?.department}
                     </p>
                   </div>
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Level</h3>
-                    <p className="text-base font-medium">{studentData.level}</p>
-                  </div>
-                  <div>
+                  {/* <div>
                     <h3 className="text-sm font-medium text-gray-500">
                       Academic Year
                     </h3>
                     <p className="text-base font-medium">
                       {studentData.academicYear}
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </CardContent>
@@ -131,67 +138,69 @@ const Dashboard = () => {
         </FadeIn>
 
         {/* Current Hostel */}
-        <FadeIn fullWidth delay={0.2}>
-          <Card className="overflow-hidden border-blue-100 shadow-sm">
-            <CardHeader className="bg-blue-50 pb-4">
-              <div className="flex items-center gap-3">
-                <div className="bg-blue-100 p-2 rounded-full">
-                  <Building className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <CardTitle>Current Hostel</CardTitle>
-                  <CardDescription>
-                    Your current accommodation details
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="flex flex-col md:flex-row md:items-center gap-6">
-                <div className="flex-1 space-y-4">
-                  <div className="flex items-start gap-3">
-                    <Building className="h-5 w-5 text-blue-600 mt-0.5" />
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-500">
-                        Hostel Assignment
-                      </h3>
-                      <p className="text-base font-medium">
-                        {studentData.currentHostel}
-                      </p>
-                    </div>
+        {studentData?.currentHostel && (
+          <FadeIn fullWidth delay={0.2}>
+            <Card className="overflow-hidden border-blue-100 shadow-sm">
+              <CardHeader className="bg-blue-50 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="bg-blue-100 p-2 rounded-full">
+                    <Building className="h-5 w-5 text-blue-600" />
                   </div>
-                  <div className="flex items-start gap-3">
-                    <CreditCard className="h-5 w-5 text-blue-600 mt-0.5" />
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-500">
-                        Payment Status
-                      </h3>
-                      <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700">
-                          <CheckCircle2 className="mr-1 h-3 w-3" />
-                          {studentData.paymentStatus}
-                        </span>
-                        <span className="text-sm text-gray-500">
-                          on {studentData.paymentDate}
-                        </span>
+                  <div>
+                    <CardTitle>Current Hostel</CardTitle>
+                    <CardDescription>
+                      Your current accommodation details
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="flex flex-col md:flex-row md:items-center gap-6">
+                  <div className="flex-1 space-y-4">
+                    <div className="flex items-start gap-3">
+                      <Building className="h-5 w-5 text-blue-600 mt-0.5" />
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">
+                          Hostel Assignment
+                        </h3>
+                        <p className="text-base font-medium">
+                          {studentData?.currentHostel}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CreditCard className="h-5 w-5 text-blue-600 mt-0.5" />
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">
+                          Payment Status
+                        </h3>
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700">
+                            <CheckCircle2 className="mr-1 h-3 w-3" />
+                            {studentData?.paymentStatus}
+                          </span>
+                          <span className="text-sm text-gray-500">
+                            on {studentData?.paymentDate}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <div className="flex-shrink-0">
+                    <Link href="/dashboard/hostels">
+                      <Button
+                        variant="outline"
+                        className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                      >
+                        Change Hostel
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
-                <div className="flex-shrink-0">
-                  <Link href="/dashboard/hostels">
-                    <Button
-                      variant="outline"
-                      className="border-blue-600 text-blue-600 hover:bg-blue-50"
-                    >
-                      Change Hostel
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </FadeIn>
+              </CardContent>
+            </Card>
+          </FadeIn>
+        )}
       </div>
 
       <Separator className="my-8" />

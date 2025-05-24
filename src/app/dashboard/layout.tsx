@@ -34,12 +34,6 @@ export default function DashboardLayout({
     return pathname === path;
   };
 
-  const { accessToken } = useSelector((state: RootState) => state.auth);
-  const { data, isLoading } = useUserDetailsQuery({
-    token: accessToken || "",
-  });
-
-  console.log("data", data,accessToken);
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}

@@ -38,120 +38,24 @@ import {
   StaggerContainer,
   StaggerItem,
 } from "@/components/animation";
+import { useGetHostelsQuery } from "@/providers/apis/hostel-api";
+import { useSelector } from "react-redux";
+import { RootState } from "@/providers/store/store";
+import { HostelsSkeleton } from "../components/hostel-loading";
 
-// Mock hostel data
-const hostels = [
-  {
-    id: 1,
-    name: "Block A",
-    type: "Standard",
-    price: 50000,
-    capacity: "4 per room",
-    available: 25,
-    total: 100,
-    image:
-      "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    features: ["Wi-Fi", "Shared Bathroom", "Common Room", "Study Area"],
-    description:
-      "Standard accommodation with basic amenities for students. Comfortable living space with shared facilities.",
-  },
-  {
-    id: 2,
-    name: "Block B",
-    type: "Premium",
-    price: 75000,
-    capacity: "2 per room",
-    available: 15,
-    total: 50,
-    image:
-      "https://images.unsplash.com/photo-1576495199011-eb94736d05d6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    features: [
-      "Wi-Fi",
-      "Attached Bathroom",
-      "Common Room",
-      "Study Area",
-      "Cafeteria",
-    ],
-    description:
-      "Premium accommodation with enhanced amenities for students who prefer more comfort and privacy.",
-  },
-  {
-    id: 3,
-    name: "Block C",
-    type: "Deluxe",
-    price: 100000,
-    capacity: "1 per room",
-    available: 5,
-    total: 30,
-    image:
-      "https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    features: [
-      "Wi-Fi",
-      "Private Bathroom",
-      "Common Room",
-      "Study Area",
-      "Cafeteria",
-      "Air Conditioning",
-    ],
-    description:
-      "Deluxe single-occupancy rooms with premium amenities for students who value privacy and comfort.",
-  },
-  {
-    id: 4,
-    name: "Block D",
-    type: "Standard",
-    price: 55000,
-    capacity: "4 per room",
-    available: 20,
-    total: 80,
-    image:
-      "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    features: ["Wi-Fi", "Shared Bathroom", "Common Room", "Study Area"],
-    description:
-      "Newly constructed standard accommodation with modern facilities and comfortable living spaces.",
-  },
-  {
-    id: 5,
-    name: "Block E",
-    type: "Premium",
-    price: 80000,
-    capacity: "2 per room",
-    available: 10,
-    total: 40,
-    image:
-      "https://images.unsplash.com/photo-1576495199011-eb94736d05d6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    features: [
-      "Wi-Fi",
-      "Attached Bathroom",
-      "Common Room",
-      "Study Area",
-      "Cafeteria",
-    ],
-    description:
-      "Modern premium accommodation with enhanced amenities and comfortable living environment.",
-  },
-  {
-    id: 6,
-    name: "Block F",
-    type: "Deluxe",
-    price: 110000,
-    capacity: "1 per room",
-    available: 3,
-    total: 20,
-    image:
-      "https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    features: [
-      "Wi-Fi",
-      "Private Bathroom",
-      "Common Room",
-      "Study Area",
-      "Cafeteria",
-      "Air Conditioning",
-    ],
-    description:
-      "Exclusive deluxe accommodation with premium amenities and maximum privacy for students.",
-  },
-];
+interface HostelType  {
+  id: number;
+  name: string;
+  type: string;
+  price: number;
+  capacity: string;
+  available: number;
+  total: number;
+  image: string;
+  features: string[];
+  description: string;
+};
+
 
 const Hostels = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -159,7 +63,14 @@ const Hostels = () => {
   const [isBooking, setIsBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
-
+  const { accessToken } = useSelector((state: RootState) => state.auth);
+  const { data:hostels, isLoading } = useGetHostelsQuery(
+    {
+      token: accessToken,
+    },
+    { skip: !accessToken }
+  );
+  
   const handleOpenDialog = (hostel: any) => {
     setSelectedHostel(hostel);
     setIsDialogOpen(true);
@@ -202,24 +113,24 @@ const Hostels = () => {
       <div className="relative h-48">
         <Image
           src={
-            hostel.type === "Standard"
+            hostel?.type === "Standard"
               ? "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-              : hostel.type === "Premium"
+              : hostel?.type === "Premium"
               ? "https://images.unsplash.com/photo-1576495199011-eb94736d05d6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
               : "https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
           }
-          alt={hostel.name}
+          alt={hostel?.name}
           fill
           className="object-cover"
         />
         <Badge className="absolute top-2 right-2 bg-blue-600">
-          {hostel.type}
+          {hostel?.type}
         </Badge>
       </div>
       <CardHeader className="pb-2">
-        <CardTitle>{hostel.name}</CardTitle>
+        <CardTitle>{hostel?.name}</CardTitle>
         <CardDescription>
-          ₦{hostel.price.toLocaleString()} per academic year
+          ₦{hostel?.price.toLocaleString()} per academic year
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2 flex-grow">
@@ -230,13 +141,13 @@ const Hostels = () => {
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-500">Available:</span>
           <span>
-            {hostel.available} of {hostel.total} rooms
+            {hostel?.available} of {hostel?.total} rooms
           </span>
         </div>
         <div className="pt-2">
           <h4 className="text-sm font-medium mb-2">Features:</h4>
           <div className="flex flex-wrap gap-2">
-            {hostel.features.slice(0, 3).map((feature: string) => (
+            {hostel?.features.slice(0, 3).map((feature: string) => (
               <Badge
                 key={feature}
                 variant="outline"
@@ -246,9 +157,9 @@ const Hostels = () => {
                 {feature}
               </Badge>
             ))}
-            {hostel.features.length > 3 && (
+            {hostel?.features?.length > 3 && (
               <Badge variant="outline">
-                +{hostel.features.length - 3} more
+                +{hostel?.features?.length - 3} more
               </Badge>
             )}
           </div>
@@ -267,6 +178,9 @@ const Hostels = () => {
     </Card>
   );
 
+  if (isLoading){
+    <HostelsSkeleton/>
+  }
   return (
     <div className="space-y-6">
       <FadeIn>
@@ -291,8 +205,8 @@ const Hostels = () => {
         <TabsContent value="all" className="space-y-6">
           <StaggerContainer>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {hostels.map((hostel) => (
-                <StaggerItem key={hostel.id}>
+              {hostels?.map((hostel:HostelType) => (
+                <StaggerItem key={hostel?.id}>
                   {renderHostelCard(hostel)}
                 </StaggerItem>
               ))}
@@ -304,9 +218,9 @@ const Hostels = () => {
           <StaggerContainer>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {hostels
-                .filter((h) => h.type === "Standard")
-                .map((hostel) => (
-                  <StaggerItem key={hostel.id}>
+                ?.filter((h:HostelType) => h?.type === "Standard")
+                ?.map((hostel:HostelType) => (
+                  <StaggerItem key={hostel?.id}>
                     {renderHostelCard(hostel)}
                   </StaggerItem>
                 ))}
@@ -318,9 +232,9 @@ const Hostels = () => {
           <StaggerContainer>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {hostels
-                .filter((h) => h.type === "Premium")
-                .map((hostel) => (
-                  <StaggerItem key={hostel.id}>
+                ?.filter((h:HostelType) => h?.type === "Premium")
+                ?.map((hostel:HostelType) => (
+                  <StaggerItem key={hostel?.id}>
                     {renderHostelCard(hostel)}
                   </StaggerItem>
                 ))}
@@ -332,9 +246,9 @@ const Hostels = () => {
           <StaggerContainer>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {hostels
-                .filter((h) => h.type === "Deluxe")
-                .map((hostel) => (
-                  <StaggerItem key={hostel.id}>
+                ?.filter((h:HostelType) => h?.type === "Deluxe")
+                ?.map((hostel:HostelType) => (
+                  <StaggerItem key={hostel?.id}>
                     {renderHostelCard(hostel)}
                   </StaggerItem>
                 ))}

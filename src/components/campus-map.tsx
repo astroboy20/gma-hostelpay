@@ -52,7 +52,7 @@ export function CampusMap({ locations }: CampusMapProps) {
     <div className="relative rounded-lg overflow-hidden border border-gray-200">
       <div className="relative h-[500px] w-full">
         <Image
-          src="https://images.unsplash.com/photo-1569447891824-7a1398971906?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80"
+          src="https://images.unsplash.com/photo-1725633719949-12db7cdbfb9b?fm=jpg&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.1.0&q=60&w=3000"
           alt="GMA Campus Map"
           fill
           className="object-cover"

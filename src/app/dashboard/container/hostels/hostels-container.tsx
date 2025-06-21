@@ -41,20 +41,12 @@ import {
 import { useGetHostelsQuery } from "@/providers/apis/hostel-api";
 import { useSelector } from "react-redux";
 import { RootState } from "@/providers/store/store";
-import { HostelsSkeleton } from "../components/hostel-loading";
+import { HostelsSkeleton } from "../../components/hostel-loading";
+import { Premium } from "./hostel-premium";
+import { HostelType } from "../../../../../typings";
+import { RenderHostelCard } from "../../components/render-hostels-card";
 
-interface HostelType {
-  _id: number;
-  name: string;
-  type: string;
-  price: number;
-  capacity: string;
-  available: number;
-  total: number;
-  image: string;
-  features: string[];
-  description: string;
-}
+
 
 const Hostels = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -107,75 +99,7 @@ const Hostels = () => {
     }
   };
 
-  const renderHostelCard = (hostel: HostelType) => (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
-      <div className="relative h-48">
-        <Image
-          src={
-            hostel?.type === "Standard"
-              ? "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-              : hostel?.type === "Premium"
-              ? "https://images.unsplash.com/photo-1576495199011-eb94736d05d6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-              : "https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-          }
-          alt={hostel?.name}
-          fill
-          className="object-cover"
-        />
-        <Badge className="absolute top-2 right-2 bg-blue-600">
-          {hostel?.type}
-        </Badge>
-      </div>
-      <CardHeader className="pb-2">
-        <CardTitle>{hostel?.name}</CardTitle>
-        <CardDescription>
-          ₦{hostel?.price.toLocaleString()} per academic year
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-2 flex-grow">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-500">Capacity:</span>
-          <span>{hostel.capacity}</span>
-        </div>
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-500">Available:</span>
-          <span>
-            {hostel?.available} of {hostel?.total} rooms
-          </span>
-        </div>
-        <div className="pt-2">
-          <h4 className="text-sm font-medium mb-2">Features:</h4>
-          <div className="flex flex-wrap gap-2">
-            {hostel?.features.slice(0, 3).map((feature: string) => (
-              <Badge
-                key={feature}
-                variant="outline"
-                className="flex items-center gap-1"
-              >
-                {getFeatureIcon(feature)}
-                {feature}
-              </Badge>
-            ))}
-            {hostel?.features?.length > 3 && (
-              <Badge variant="outline">
-                +{hostel?.features?.length - 3} more
-              </Badge>
-            )}
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Pulse>
-          <Button
-            className="w-full bg-blue-600 hover:bg-blue-700"
-            onClick={() => handleOpenDialog(hostel)}
-          >
-            View Details
-          </Button>
-        </Pulse>
-      </CardFooter>
-    </Card>
-  );
+
 
   if (isLoading) {
     return <HostelsSkeleton />;
@@ -206,7 +130,7 @@ const Hostels = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {hostels?.map((hostel: HostelType) => (
                 <StaggerItem key={hostel?._id}>
-                  {renderHostelCard(hostel)}
+                  {RenderHostelCard({hostel})}
                 </StaggerItem>
               ))}
             </div>
@@ -220,7 +144,7 @@ const Hostels = () => {
                 ?.filter((h: HostelType) => h?.type === "Standard")
                 ?.map((hostel: HostelType) => (
                   <StaggerItem key={hostel?._id}>
-                    {renderHostelCard(hostel)}
+                   {RenderHostelCard({hostel})}
                   </StaggerItem>
                 ))}
             </div>
@@ -229,15 +153,7 @@ const Hostels = () => {
 
         <TabsContent value="premium" className="space-y-6">
           <StaggerContainer>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {hostels
-                ?.filter((h: HostelType) => h?.type === "Premium")
-                ?.map((hostel: HostelType) => (
-                  <StaggerItem key={hostel?._id}>
-                    {renderHostelCard(hostel)}
-                  </StaggerItem>
-                ))}
-            </div>
+            <Premium hostels={hostels} />
           </StaggerContainer>
         </TabsContent>
 
@@ -248,7 +164,7 @@ const Hostels = () => {
                 ?.filter((h: HostelType) => h?.type === "Deluxe")
                 ?.map((hostel: HostelType) => (
                   <StaggerItem key={hostel?._id}>
-                    {renderHostelCard(hostel)}
+                   {RenderHostelCard({hostel})}
                   </StaggerItem>
                 ))}
             </div>
@@ -256,7 +172,6 @@ const Hostels = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Separate Dialog component outside of the card rendering */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-3xl">
           {selectedHostel && (

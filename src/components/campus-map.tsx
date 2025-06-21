@@ -1,58 +1,60 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Building, MapPin, Navigation, Info } from "lucide-react"
+import { useState } from "react";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Building, MapPin, Navigation, Info } from "lucide-react";
 
 interface MapLocation {
-  id: string
-  name: string
-  type: "hostel" | "facility" | "landmark"
-  position: { x: number; y: number }
-  description: string
+  id: string;
+  name: string;
+  type: "hostel" | "facility" | "landmark";
+  position: { x: number; y: number };
+  description: string;
 }
 
 interface CampusMapProps {
-  locations: MapLocation[]
+  locations: MapLocation[];
 }
 
 export function CampusMap({ locations }: CampusMapProps) {
-  const [selectedLocation, setSelectedLocation] = useState<MapLocation | null>(null)
-  const [isInfoVisible, setIsInfoVisible] = useState(false)
+  const [selectedLocation, setSelectedLocation] = useState<MapLocation | null>(
+    null
+  );
+  const [isInfoVisible, setIsInfoVisible] = useState(false);
 
   const getIconByType = (type: string) => {
     switch (type) {
       case "hostel":
-        return <Building className="h-4 w-4" />
+        return <Building className="h-4 w-4" />;
       case "facility":
-        return <Info className="h-4 w-4" />
+        return <Info className="h-4 w-4" />;
       case "landmark":
-        return <Navigation className="h-4 w-4" />
+        return <Navigation className="h-4 w-4" />;
       default:
-        return <MapPin className="h-4 w-4" />
+        return <MapPin className="h-4 w-4" />;
     }
-  }
+  };
 
   const getColorByType = (type: string) => {
     switch (type) {
       case "hostel":
-        return "bg-blue-500"
+        return "bg-blue-500";
       case "facility":
-        return "bg-green-500"
+        return "bg-green-500";
       case "landmark":
-        return "bg-amber-500"
+        return "bg-amber-500";
       default:
-        return "bg-gray-500"
+        return "bg-gray-500";
     }
-  }
+  };
 
   return (
     <div className="relative rounded-lg overflow-hidden border border-gray-200">
       <div className="relative h-[500px] w-full">
         <Image
-          src="https://images.unsplash.com/photo-1725633719949-12db7cdbfb9b?fm=jpg&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.1.0&q=60&w=3000"
+          src="/images/campus.jpeg"
           alt="GMA Campus Map"
           fill
           className="object-cover"
@@ -63,7 +65,7 @@ export function CampusMap({ locations }: CampusMapProps) {
           <motion.button
             key={location.id}
             className={`absolute z-10 p-1 rounded-full ${getColorByType(
-              location.type,
+              location.type
             )} text-white shadow-md hover:scale-110 transition-transform`}
             style={{
               left: `${location.position.x}%`,
@@ -71,8 +73,8 @@ export function CampusMap({ locations }: CampusMapProps) {
               transform: "translate(-50%, -50%)",
             }}
             onClick={() => {
-              setSelectedLocation(location)
-              setIsInfoVisible(true)
+              setSelectedLocation(location);
+              setIsInfoVisible(true);
             }}
             whileHover={{ scale: 1.2 }}
             whileTap={{ scale: 0.9 }}
@@ -105,7 +107,10 @@ export function CampusMap({ locations }: CampusMapProps) {
       {selectedLocation && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: isInfoVisible ? 1 : 0, y: isInfoVisible ? 0 : 20 }}
+          animate={{
+            opacity: isInfoVisible ? 1 : 0,
+            y: isInfoVisible ? 0 : 20,
+          }}
           className="absolute bottom-0 left-0 right-0 bg-white p-4 shadow-md"
         >
           <div className="flex justify-between items-start">
@@ -114,14 +119,20 @@ export function CampusMap({ locations }: CampusMapProps) {
                 {getIconByType(selectedLocation.type)}
                 {selectedLocation.name}
               </h3>
-              <p className="text-sm text-gray-600 mt-1">{selectedLocation.description}</p>
+              <p className="text-sm text-gray-600 mt-1">
+                {selectedLocation.description}
+              </p>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => setIsInfoVisible(false)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsInfoVisible(false)}
+            >
               Close
             </Button>
           </div>
         </motion.div>
       )}
     </div>
-  )
+  );
 }

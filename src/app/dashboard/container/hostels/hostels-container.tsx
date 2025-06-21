@@ -45,8 +45,7 @@ import { HostelsSkeleton } from "../../components/hostel-loading";
 import { Premium } from "./hostel-premium";
 import { HostelType } from "../../../../../typings";
 import { RenderHostelCard } from "../../components/render-hostels-card";
-
-
+import { Standard } from "./hostel-standard";
 
 const Hostels = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -99,8 +98,6 @@ const Hostels = () => {
     }
   };
 
-
-
   if (isLoading) {
     return <HostelsSkeleton />;
   }
@@ -130,7 +127,7 @@ const Hostels = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {hostels?.map((hostel: HostelType) => (
                 <StaggerItem key={hostel?._id}>
-                  {RenderHostelCard({hostel})}
+                  {RenderHostelCard({ hostel })}
                 </StaggerItem>
               ))}
             </div>
@@ -139,15 +136,7 @@ const Hostels = () => {
 
         <TabsContent value="standard" className="space-y-6">
           <StaggerContainer>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {hostels
-                ?.filter((h: HostelType) => h?.type === "Standard")
-                ?.map((hostel: HostelType) => (
-                  <StaggerItem key={hostel?._id}>
-                   {RenderHostelCard({hostel})}
-                  </StaggerItem>
-                ))}
-            </div>
+            <Standard hostels={hostels} />
           </StaggerContainer>
         </TabsContent>
 
@@ -164,7 +153,7 @@ const Hostels = () => {
                 ?.filter((h: HostelType) => h?.type === "Deluxe")
                 ?.map((hostel: HostelType) => (
                   <StaggerItem key={hostel?._id}>
-                   {RenderHostelCard({hostel})}
+                    {RenderHostelCard({ hostel })}
                   </StaggerItem>
                 ))}
             </div>

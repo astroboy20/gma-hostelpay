@@ -43,8 +43,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/providers/store/store";
 import { HostelsSkeleton } from "../components/hostel-loading";
 
-interface HostelType  {
-  id: number;
+interface HostelType {
+  _id: number;
   name: string;
   type: string;
   price: number;
@@ -54,8 +54,7 @@ interface HostelType  {
   image: string;
   features: string[];
   description: string;
-};
-
+}
 
 const Hostels = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -64,13 +63,13 @@ const Hostels = () => {
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const { accessToken } = useSelector((state: RootState) => state.auth);
-  const { data:hostels, isLoading } = useGetHostelsQuery(
+  const { data: hostels, isLoading } = useGetHostelsQuery(
     {
       token: accessToken,
     },
     { skip: !accessToken }
   );
-  
+
   const handleOpenDialog = (hostel: any) => {
     setSelectedHostel(hostel);
     setIsDialogOpen(true);
@@ -108,7 +107,7 @@ const Hostels = () => {
     }
   };
 
-  const renderHostelCard = (hostel: any) => (
+  const renderHostelCard = (hostel: HostelType) => (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
       <div className="relative h-48">
         <Image
@@ -178,8 +177,8 @@ const Hostels = () => {
     </Card>
   );
 
-  if (isLoading){
-    <HostelsSkeleton/>
+  if (isLoading) {
+    return <HostelsSkeleton />;
   }
   return (
     <div className="space-y-6">
@@ -205,8 +204,8 @@ const Hostels = () => {
         <TabsContent value="all" className="space-y-6">
           <StaggerContainer>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {hostels?.map((hostel:HostelType) => (
-                <StaggerItem key={hostel?.id}>
+              {hostels?.map((hostel: HostelType) => (
+                <StaggerItem key={hostel?._id}>
                   {renderHostelCard(hostel)}
                 </StaggerItem>
               ))}
@@ -218,9 +217,9 @@ const Hostels = () => {
           <StaggerContainer>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {hostels
-                ?.filter((h:HostelType) => h?.type === "Standard")
-                ?.map((hostel:HostelType) => (
-                  <StaggerItem key={hostel?.id}>
+                ?.filter((h: HostelType) => h?.type === "Standard")
+                ?.map((hostel: HostelType) => (
+                  <StaggerItem key={hostel?._id}>
                     {renderHostelCard(hostel)}
                   </StaggerItem>
                 ))}
@@ -232,9 +231,9 @@ const Hostels = () => {
           <StaggerContainer>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {hostels
-                ?.filter((h:HostelType) => h?.type === "Premium")
-                ?.map((hostel:HostelType) => (
-                  <StaggerItem key={hostel?.id}>
+                ?.filter((h: HostelType) => h?.type === "Premium")
+                ?.map((hostel: HostelType) => (
+                  <StaggerItem key={hostel?._id}>
                     {renderHostelCard(hostel)}
                   </StaggerItem>
                 ))}
@@ -246,9 +245,9 @@ const Hostels = () => {
           <StaggerContainer>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {hostels
-                ?.filter((h:HostelType) => h?.type === "Deluxe")
-                ?.map((hostel:HostelType) => (
-                  <StaggerItem key={hostel?.id}>
+                ?.filter((h: HostelType) => h?.type === "Deluxe")
+                ?.map((hostel: HostelType) => (
+                  <StaggerItem key={hostel?._id}>
                     {renderHostelCard(hostel)}
                   </StaggerItem>
                 ))}
